@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-workshop-nginx-conf-cfgmap
+  labels:
+    name: test-workshop-nginx-conf-cfgmap
+    app: test-workshop
+data:
+  nginx.conf: |-
+    # ngins is setting up here, it's not intesting, don't see
+    worker_processes 1;
+    error_log /usr/local/openresty/nginx/logs/error.log debug;
+    events {
+        worker_connections 4096;
+    }
+
+    http {
+      include       mime.types;
+      default_type  application/octet-stream;
+
+      # здесь объявляются prometheus метрики
+      lua_shared_dict prometheus_metrics 10M;
+      init_by_lua_block {
+          prometheus = require("prometheus").init("prometheus_metrics")
+          metric_requests = prometheus:counter("mockmetrics_front_requests_total", "Number of HTTP requests", {"status"})
+          metric_latency = prometheus:histogram("mockmetrics_front_request_duration_seconds", "HTTP request latency")
+          metric_connections = prometheus:gauge("mockmetrics_front_connections", "Number of HTTP connections", {"state"})
+      }
+
+      # metrics server and endpoint
+      server {
+        listen 8080;
+
+        location /metrics {
+          content_by_lua_block {
+              metric_connections:set(ngx.var.connections_active, {"active"})
+              metric_connections:set(ngx.var.connections_reading, {"reading"})
+              metric_connections:set(ngx.var.connections_waiting, {"waiting"})
+              metric_connections:set(ngx.var.connections_writing, {"writing"})
+              prometheus:collect()
+          }
+        }
+
+        # health/live endpoint
+        location /ping {
+          return 200 "OK";
+        }
+
+        # default handler (not on /ping or /metrics)
+        location / {
+          return 404 "Welcome to the workshop. Page doesn't exist.";
+        }
+      }
+
+      # main server and endpoint
+      server {
+        listen       80 default_server;
+        server_name  _;
+
+        location / {
+          log_by_lua_block {
+              metric_requests:inc(1, {ngx.var.status})
+              metric_latency:observe(tonumber(ngx.var.request_time))
+              # Pod's log tell you that error is here? Oh, of course it's not here. Add 9 strings (from configmap header)
+          }
+
+          return 200 "Armenians are playing backgammon here...";
+        }
+      }
+
+      # the string below is breaking nginx preventing it to start, 1/2 CrashLoops here :)
+      Armenians are playing backgammon here...
+    }

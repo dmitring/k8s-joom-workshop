@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "backend-workers.fullname" . }}
+spec:
+  jobLabel: backend-workers
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: backend-workers
+      app.kubernetes.io/name: backend-workers-diagnostic
+  endpoints:
+    - interval: 1s
+      path: /metrics
+      port: diagnostic
+    - interval: 10s
+      path: /metrics_10s
+      port: diagnostic
+    - interval: 1m
+      path: /metrics_1m
+      port: diagnostic

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-workshop-svc
+  labels:
+    name: test-workshop-svc
+    app: test-workshop
+spec:
+  selector:
+    app: test-workshop
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9376
+  type: ClusterIP
+  # clusterIP: None

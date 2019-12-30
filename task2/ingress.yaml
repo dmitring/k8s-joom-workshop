@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: test-workshop-ingress
+  labels:
+    name: test-workshop-ingress
+    app: test-workshop
+spec:
+  rules:
+    - host: <your name>-task2-test-workshop.sandbox.k8s.joomdev.net
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: test-workshop-svc
+              servicePort: 80

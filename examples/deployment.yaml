@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-workshop-deployment
+  labels:
+    name: test-workshop-deployment
+    app: test-workshop
+spec:
+  selector:
+    matchLabels:
+      app: trafficserver
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+
+  template:
+    metadata:
+      labels:
+        app: trafficserver
+    spec:
+      volumes:
+        - name: ts-storage
+          emptyDir: {}
+
+      containers:
+        - name: trafficserver
+          image: docker.io/torchbox/k8s-ts-ingress:v1.0.0-alpha9
+          imagePullPolicy: IfNotPresent
+
+          env:
+            - name: TS_CONFIGMAP
+              value: trafficserver/ts-config
+
+          resources:
+            limits:
+              cpu: "1"
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+
+          ports:
+            - containerPort: 8080
+              hostPort: 8080
+              name: http
+              protocol: TCP
+            - containerPort: 8443
+              hostPort: 8443
+              name: https
+              protocol: TCP
+
+          # Ensure TS's healthcheck fails before it stops serving requests, so it
+          # can be removed from any load balancer node list.
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - /bin/rm -f /run/ts-alive; sleep 20
+
+          # The probes use TS's healthchecks plugin, so this will only return
+          # successfully when TS is running.  It does not currently check the
+          # health of the plugin, e.g. that it was able to contact the API server.
+          livenessProbe:
+            failureThreshold: 2
+            httpGet:
+              httpHeaders:
+                - name: Host
+                  value: localhost
+              path: /__trafficserver_alive
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 3
+            successThreshold: 1
+            timeoutSeconds: 10
+
+          readinessProbe:
+            failureThreshold: 2
+            httpGet:
+              httpHeaders:
+                - name: Host
+                  value: localhost
+              path: /__trafficserver_alive
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 3
+            successThreshold: 1
+            timeoutSeconds: 10
+
+          # Mount the cache storage we configured above.
+          volumeMounts:
+            - mountPath: /var/lib/trafficserver
+              name: ts-storage

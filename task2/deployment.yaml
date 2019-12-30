@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-workshop-deployment
+  labels:
+    name: test-workshop-deployment
+    app: test-workshop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-workshop
+  template:
+    metadata:
+      labels:
+        app: test-workshop
+    spec:
+      containers:
+      - name: joom-rf-primary-receiver-openresty
+        image: "docker.jom.it/rf-receiver-openresty:a881236.9822101021"
+        imagePullPolicy: IfNotPresent
+        ports:
+          - name: http
+            containerPort: 80
+          protocol: TCP
+          - name: metrics
+            containerPort: 8080
+            protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: metrics
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 2
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: metrics
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 2
+        volumeMounts:
+          - name: nginx-conf
+            mountPath: /etc/rf-receiver/nginx/
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: test-workshop-nginx-conf-cfgmap
+
