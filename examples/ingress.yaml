@@ -22,7 +22,7 @@ spec:
               servicePort: 443
           - path: /
             backend:
-              serviceName: rf-primary-receiver-svc-api--openresty
+              serviceName: test-workshop-svc
               servicePort: 80
     - host: www.joom.com
       http:

@@ -4,16 +4,16 @@ metadata:
   name: test-workshop-rs
   labels:
     name: test-workshop-namespace
-    app: test-workshop
+    app: test-workshop-rs
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: test-workshop
+      app: test-workshop-pod
   template:
     metadata:
       labels:
-        app: test-workshop
+        app: test-workshop-pod
     spec:
       containers:
         - name: php-redis
