@@ -8,6 +8,7 @@ metadata:
 data:
   nginx.conf: |-
     # тут идет настройка nginx, нас это не интересует
+    env POD_NAME;
     worker_processes 1;
     error_log /usr/local/openresty/nginx/logs/error.log debug;
     events {
@@ -16,7 +17,7 @@ data:
 
     http {
       include       mime.types;
-      default_type  application/octet-stream;
+      default_type  application/text;
 
       # здесь объявляются prometheus метрики
       lua_shared_dict prometheus_metrics 10M;
@@ -52,13 +53,15 @@ data:
         listen       80 default_server;
         server_name  _;
 
+        set_by_lua $pod_name 'return os.getenv("POD_NAME")';
+
         location / {
           log_by_lua_block {
               metric_requests:inc(1, {ngx.var.status})
               metric_latency:observe(tonumber(ngx.var.request_time))
           }
 
-          return 200 "Armenians are playing backgammon here...";
+          return 200 $pod_name;
         }
       }
     }

@@ -6,7 +6,7 @@ metadata:
     name: test-workshop-deployment
     app: test-workshop
 spec:
-  replicas: 1
+  replicas: 5
   selector:
     matchLabels:
       app: test-workshop
@@ -19,6 +19,11 @@ spec:
       - name: joom-rf-primary-receiver-openresty
         image: "docker.joom.it/rf-receiver-openresty:latest"
         imagePullPolicy: IfNotPresent
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
         ports:
           - name: http
             containerPort: 80
