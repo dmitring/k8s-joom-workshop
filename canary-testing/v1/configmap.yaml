@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: test-workshop-nginx-conf-cfgmap
+  namespace: test-nginx-ingress
   labels:
     name: test-workshop-nginx-conf-cfgmap
     app: test-workshop

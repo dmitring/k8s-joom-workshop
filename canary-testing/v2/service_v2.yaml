@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: test-workshop-v2-svc
+  namespace: test-nginx-ingress-v2
   labels:
     name: test-workshop-v2-svc
     app: test-workshop

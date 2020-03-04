@@ -2,6 +2,7 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: test-workshop-ingress
+  namespace: test-nginx-ingress
   labels:
     name: test-workshop-ingress
     app: test-workshop
@@ -9,11 +10,9 @@ metadata:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/affinity: cookie
     nginx.ingress.kubernetes.io/affinity-mode: balanced
-    nginx.ingress.kubernetes.io/session-cookie-name: joomsessionv2
+    nginx.ingress.kubernetes.io/session-cookie-name: joomsessionv1
     nginx.ingress.kubernetes.io/session-cookie-max-age: "30"
     nginx.ingress.kubernetes.io/session-cookie-change-on-failure: "true"
-    nginx.ingress.kubernetes.io/canary: "true"
-    nginx.ingress.kubernetes.io/canary-weight: "25"
 spec:
   rules:
     - host: testingress.sandbox.k8s.joomdev.net
@@ -21,5 +20,5 @@ spec:
         paths:
           - path: /
             backend:
-              serviceName: test-workshop-svc-v2
+              serviceName: test-workshop-svc
               servicePort: 80

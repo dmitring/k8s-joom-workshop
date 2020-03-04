@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: test-workshop-v2-deployment
+  namespace: test-nginx-ingress-v2
   labels:
     name: test-workshop-v2-deployment
     app: test-workshop

@@ -2,11 +2,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: test-workshop-deployment
+  namespace: test-nginx-ingress
   labels:
     name: test-workshop-deployment
     app: test-workshop
 spec:
-  replicas: 6
+  replicas: 5
   selector:
     matchLabels:
       app: test-workshop
