@@ -1,20 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: test-ingress-deployment
+  name: blue
   namespace: test-haproxy-ingress-v1
   labels:
-    name: test-ingress-deployment
+    name: blue
     app: test-haproxy-ingress
 spec:
-  replicas: 5
+  replicas: 1
   selector:
     matchLabels:
       app: test-haproxy-ingress
+      group: blue
   template:
     metadata:
       labels:
         app: test-haproxy-ingress
+        group: blue
     spec:
       containers:
       - name: joom-rf-primary-receiver-openresty

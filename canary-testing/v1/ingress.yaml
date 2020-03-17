@@ -8,6 +8,12 @@ metadata:
     app: test-haproxy-ingress
   annotations:
     kubernetes.io/ingress.class: "haproxy"
+    ingress.kubernetes.io/affinity: "cookie"
+    ingress.kubernetes.io/session-cookie-name: "joomsession"
+    ingress.kubernetes.io/balance-algorithm: roundrobin
+    ingress.kubernetes.io/blue-green-deploy: group=blue=60,group=green=40
+    ingress.kubernetes.io/blue-green-mode: deploy
+    ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
     - host: testhaproxyingress.sandbox.k8s.joomdev.net
