@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: test-workshop-svc
-  namespace: test-nginx-ingress
+  name: test-ingress-svc
+  namespace: test-haproxy-ingress-v1
   labels:
-    name: test-workshop-svc
-    app: test-workshop
+    name: test-ingress-svc
+    app: test-haproxy-ingress
 spec:
   ports:
     - port: 80
@@ -17,4 +17,4 @@ spec:
       protocol: TCP
       name: metrics
   selector:
-    app: test-workshop
+    app: test-haproxy-ingress

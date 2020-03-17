@@ -1,26 +1,19 @@
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: test-workshop-ingress
-  namespace: test-nginx-ingress
+  name: test-ingress
+  namespace: test-haproxy-ingress-v1
   labels:
-    name: test-workshop-ingress
-    app: test-workshop
+    name: test-ingress
+    app: test-haproxy-ingress
   annotations:
-    kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/affinity: cookie
-    nginx.ingress.kubernetes.io/affinity-mode: balanced
-    nginx.ingress.kubernetes.io/session-cookie-name: joomsessionv1
-    nginx.ingress.kubernetes.io/session-cookie-max-age: "30"
-    nginx.ingress.kubernetes.io/session-cookie-change-on-failure: "true"
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      more_set_headers "Set-Cookie: test1=1";
+    kubernetes.io/ingress.class: "haproxy"
 spec:
   rules:
-    - host: testingress.sandbox.k8s.joomdev.net
+    - host: testhaproxyingress.sandbox.k8s.joomdev.net
       http:
         paths:
           - path: /
             backend:
-              serviceName: test-workshop-svc
+              serviceName: test-ingress-svc
               servicePort: 80

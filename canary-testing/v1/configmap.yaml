@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: test-workshop-nginx-conf-cfgmap
-  namespace: test-nginx-ingress
+  name: test-ingress-nginx-conf-cfgmap
+  namespace: test-haproxy-ingress-v1
   labels:
-    name: test-workshop-nginx-conf-cfgmap
-    app: test-workshop
+    name: test-ingress-nginx-conf-cfgmap
+    app: test-haproxy-ingress
 data:
   nginx.conf: |-
     # тут идет настройка nginx, нас это не интересует

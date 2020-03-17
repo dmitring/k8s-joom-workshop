@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: test-workshop-deployment
-  namespace: test-nginx-ingress
+  name: test-ingress-deployment
+  namespace: test-haproxy-ingress-v1
   labels:
-    name: test-workshop-deployment
-    app: test-workshop
+    name: test-ingress-deployment
+    app: test-haproxy-ingress
 spec:
   replicas: 5
   selector:
     matchLabels:
-      app: test-workshop
+      app: test-haproxy-ingress
   template:
     metadata:
       labels:
-        app: test-workshop
+        app: test-haproxy-ingress
     spec:
       containers:
       - name: joom-rf-primary-receiver-openresty
@@ -38,5 +38,5 @@ spec:
       volumes:
         - name: nginx-conf
           configMap:
-            name: test-workshop-nginx-conf-cfgmap
+            name: test-ingress-nginx-conf-cfgmap
 
